@@ -18,18 +18,22 @@ __email__ = "bo.claes@student.kdg.be"
 __status__ = "Development"
 
 # variabelen led's, buttons
-button_1 = Button(pin=18)
-button_2 = Button(pin=12)
+button_1 = Button(pin=13)
+button_2 = Button(pin=19)
+button_3 = Button(pin=26)
 
-red = 16
-orange = 20
-green = 21
+red_1 = 16
+orange_1 = 20
+green_1 = 21
+
+file=open("fb.txt","r")
+fb_api = file.read()
 
 # path waar de folder gemaakt moet worden
 path = "/home/pi/logs"
 
 # variablen facebook
-token_f = "EABEmtsJaaWQBADj3gyAVTZBTNThfXPLlrHcQ7PfUi3A1yY1eBAgBZC3Q2AIKkjN6ivZBpM4viWiuH6l6CFXaZA2vHAAqJlVR5dpaRmtMxCcFGszcoRjB1tYT2qlhKB223CxUedV4OZB0ZCpQKBM0W5WiEaiBrZBJgb5jtsp7F8fae98v5nCr5ZB0iTl3qeuC5Vo3H9xlveKhi0LAqQXYqZBhk"
+token_f ="EABEmtsJaaWQBAEQS9vEQsQdvGvmC4lqqwKZBFjQjmKYtK2t0osXvrCaS5EfZB9dIOJXanI6Ic6jOKNi5sDZB28CFyk3c2TK9NQSfHDTZBC3ZBjsQZAXrI7LUxasAj8oo8V2IFwskMsXhMiHOYigZCTZCL9aoCZBE6pOsJS5byK6FoEDYVzZAonsQ2hqqJBhcocJldkvHXueulaZAhsVEU0qeUq5"
 
 # variabelen youtube
 token = "AIzaSyCx8-hcIQdf7taEdK_IQ03MrY1EMfrayi0"
@@ -61,25 +65,24 @@ def create_folder():
         print("folder already exist")
 
 
+
 def red_led(led):
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(red, GPIO.OUT)
-    GPIO.output(red, led)
-
+    GPIO.setup(red_1, GPIO.OUT)
+    GPIO.output(red_1, led)
 
 def green_led(led):
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(green, GPIO.OUT)
-    GPIO.output(green, led)
-
+    GPIO.setup(green_1, GPIO.OUT)
+    GPIO.output(green_1, led)
 
 def orange_led(led):
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(orange, GPIO.OUT)
-    GPIO.output(orange, led)
+    GPIO.setup(orange_1, GPIO.OUT)
+    GPIO.output(orange_1, led)
 
 
 def clear_led():
@@ -98,8 +101,6 @@ def facebook_likes(token_f):
 
     with open('logs/facebook.json', 'w', encoding='utf8') as f:
         json.dump(profile, f, ensure_ascii=False)
-    with open('logs/facebook_likes.json', 'w', encoding='utf8') as f:
-        json.dump(fb_likes_2, f, ensure_ascii=False)
 
 
 def youtube_id():
@@ -134,8 +135,7 @@ def read_notion_Youtube_id(databaseId_youtube, headers_post):
     goal = data["results"][0]["properties"]["Goal"]["number"]
     url = data["results"][0]["properties"]["url youtube video"]["title"][0]["text"]["content"]
 
-    with open('logs/notion_youtube.json', 'w', encoding='utf8') as f:
-        json.dump(data, f, ensure_ascii=False)
+
 
 
 def read_notion_facebook(databaseId_facebook, headers_post):
@@ -193,7 +193,6 @@ def update_notion_facebook(page_id_facebook, headers_patch):
 def youtube_notion():
     while True:
         print("u bent nu in youtube")
-        clear_led()
         create_folder()
         read_notion_Youtube_id(databaseId_Youtube, headers_post)
         youtube_id()
@@ -212,7 +211,7 @@ def youtube_notion():
         elif converted_view <= goal/100*40:
             print("tussen 20-40%")
             red_led(GPIO.HIGH)
-            orange_led(GPIO.LOW)
+            orange_led(GPIO.HIGH)
             green_led(GPIO.LOW)
         elif converted_view <= goal/100*60:
             print("tussen 40-60%")
@@ -221,26 +220,25 @@ def youtube_notion():
             green_led(GPIO.LOW)
         elif converted_view <= goal/100*80:
             print("tussen 60-80%")
-            orange_led(GPIO.LOW)
+            orange_led(GPIO.HIGH)
             green_led(GPIO.HIGH)
             red_led(GPIO.LOW)
         elif converted_view <= goal/100*99:
             print("tussen 80-100%")
             green_led(GPIO.HIGH)
-            orange_led(GPIO.LOW)
+            orange_led(GPIO.HIGH)
             red_led(GPIO.LOW)
-        i = 10
+        i = 100
         while i > 0:
             i -= 1
-            time.sleep(1)
-            if button_1.is_active:
-                return
+            time.sleep(0.1)
+            if button_3.is_active:
+                main()
 
 
 def facebook_notion():
     while True:
         print("u bent nu in facebook")
-        clear_led()
         create_folder()
         read_notion_facebook(databaseId_facebook, headers_post)
         facebook_likes(token_f)
@@ -258,7 +256,7 @@ def facebook_notion():
         elif fb_likes_2 <= fb_goal/100*40:
             print("tussen 20-40%")
             red_led(GPIO.HIGH)
-            orange_led(GPIO.LOW)
+            orange_led(GPIO.HIGH)
             green_led(GPIO.LOW)
         elif fb_likes_2 <= fb_goal/100*60:
             print("tussen 40-60%")
@@ -267,23 +265,25 @@ def facebook_notion():
             green_led(GPIO.LOW)
         elif fb_likes_2 <= fb_goal/100*80:
             print("tussen 60-80%")
-            orange_led(GPIO.LOW)
+            orange_led(GPIO.HIGH)
             green_led(GPIO.HIGH)
             red_led(GPIO.LOW)
         elif fb_likes_2 <= fb_goal/100*99:
             print("tussen 80-100%")
             green_led(GPIO.HIGH)
-            orange_led(GPIO.LOW)
+            orange_led(GPIO.HIGH)
             red_led(GPIO.LOW)
-        i = 10
+        i = 100
         while i > 0:
             i -= 1
-            time.sleep(1)
-            if button_1.is_active:
-                return
+            time.sleep(0.1)
+            if button_3.is_active:
+                main()
 
 
 def main():
+    clear_led()
+    print("u bent in main")
     while True:
         if button_1.is_active:
             youtube_notion()
@@ -293,3 +293,4 @@ def main():
 
 if __name__ == '__main__':  # code to execute if called from command-line
     main()
+
