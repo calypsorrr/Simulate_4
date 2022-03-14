@@ -6,11 +6,11 @@ sudo apt-get -y install python3-pip
 sudo apt -y install git
 sudo apt-get -y install nodejs npm node-semver
 pip3 install flask
-pip3 install facebook-sdk
-pip3 install pigpio
+sudo pip3 install facebook-sdk
+sudo pip3 install pigpio
 pip3 install RPI.GPIO
-pip3 install adafruit-blinka
-pip3 install rpi_ws281x adafruit-circuitpython-neopixel
+sudo pip3 install adafruit-blinka
+sudo pip3 install rpi_ws281x adafruit-circuitpython-neopixel
 sudo apt-get install hostapd
 sudo apt-get install udhcpd
 sudo systemctl disable hostapd
