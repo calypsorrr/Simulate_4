@@ -3,7 +3,6 @@
 Simulate 4 project
 """
 
-import time
 import requests
 import urllib.request
 import RPi.GPIO as GPIO
@@ -14,25 +13,74 @@ from urllib.parse import urlparse
 import os
 import board
 import neopixel
+import time
+import Adafruit_GPIO.SPI as SPI
+import Adafruit_SSD1306
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+import subprocess
 
 __author__ = "Bo Claes"
 __email__ = "bo.claes@student.kdg.be"
 __status__ = "Development"
 
+# Raspberry Pi pin configuration:
+RST = None
+# Note the following are only used with SPI:
+# DC = 23
+# SPI_PORT = 0
+# SPI_DEVICE = 0
+
+# Beaglebone Black pin configuration:
+# RST = 'P9_12'
+# Note the following are only used with SPI:
+# DC = 'P9_15'
+# SPI_PORT = 1
+# SPI_DEVICE = 0
+
+# 128x32 display with hardware I2C:
+disp = Adafruit_SSD1306.SSD1306_128_32(rst=RST)
+
+# Initialize library.
+disp.begin()
+
+# Clear display.
+disp.clear()
+disp.display()
+
+# Create blank image for drawing.
+# Make sure to create image with mode '1' for 1-bit color.
+width = disp.width
+height = disp.height
+image = Image.new('1', (width, height))
+
+# Get drawing object to draw on image.
+draw = ImageDraw.Draw(image)
+
+padding = 10
+shape_width = 30
+top = padding
+bottom = height-padding
+x = padding
+
+# Load default font.
+font = ImageFont.load_default()
+
 # variabelen led's, buttons
 button_1 = Button(pin=21)
-button_2 = Button(pin=20)
-button_3 = Button(pin=16)
+button_2 = Button(pin=12)
+button_3 = Button(pin=26)
 
 LED_COUNT = 10
 pixels = neopixel.NeoPixel(board.D18,LED_COUNT)
 
 
 # path waar de folder gemaakt moet worden
-path = "/home/pi/logs"
+path = "/home/pi/project_sim/logs"
 
 # variablen facebook
-token_f ="EABEmtsJaaWQBANAR3BI10rxgUsImKFWBEWNgWWnzHeA32cskjlpSI3CPChZBIUZCPr6yehHYqZBcR2ZCij7aEA1MY5aG7DJ8BGcCwAfszHO1oWSt0cbI23ZArCZAGkooUmpurKuO96CzVIT6eujf00nmnvHioAE08DqgwsEAcwkPxPt8hxTJAq6ZCeuZC9Aw19Q4YLqZCGPZAw96s4qIw4AEZAL"
+token_f ="EABEmtsJaaWQBAL7ZCZCI48J9j6Qb110kwwON3nABl1oH1iZCRenLx93ZBI7xbVn82SEiHy7C9tr2dhu0XxxQ6uVwNVhOh4BdMp6BDOQWZBZBzt7ziyjbZCZAAEq4FcNPjwQZAUYI1fkCjXGNP6Wsr282iSmsRotSCDNiv2gbKjeYlOHQxEzHp7TTIj6gkNKoTOYuUsvQUPOQbceGjY7NzavUX"
 
 # variabelen youtube
 token = "AIzaSyCx8-hcIQdf7taEdK_IQ03MrY1EMfrayi0"
@@ -165,6 +213,11 @@ def update_notion_facebook(page_id_facebook, headers_patch):
 
 
 def youtube_notion():
+    disp.clear()
+    draw.rectangle((0,0,width,height), outline=0, fill=0)
+    draw.text((x + 30, top), "Youtube", font=font, font_size=30, fill=255)
+    disp.image(image)
+    disp.display()
     while True:
         print("u bent nu in youtube")
         create_folder()
@@ -259,6 +312,11 @@ def youtube_notion():
 
 
 def facebook_notion():
+    disp.clear()
+    draw.rectangle((0,0,width,height), outline=0, fill=0)
+    draw.text((x + 30, top), "Facebook", font=font, font_size=30, fill=255)
+    disp.image(image)
+    disp.display()
     while True:
         print("u bent nu in facebook")
         create_folder()
@@ -352,7 +410,12 @@ def facebook_notion():
 
 
 def main():
+    disp.clear()
     pixels.fill((0, 0, 0))
+    draw.rectangle((0,0,width,height), outline=0, fill=0)
+    draw.text((x + 30, top), "Main menu", font=font, fill=255)
+    disp.image(image)
+    disp.display()
     print("u bent in main")
     while True:
         if button_1.is_active:
