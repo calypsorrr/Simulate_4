@@ -2,10 +2,10 @@
 
 iwgetid
 if [ $? -eq 255 ]; then
-  cd wifi-setup
-  sudo node index.js
+  sudo service wifi-setup start
+  sleep 60
   python3 /home/pi/python_flask/web.py
   echo reboot
 else
-  sudo python3 /home/pi/button_notion.py
+  sudo python3 /home/pi/project_sim/button_notion.py
 fi
