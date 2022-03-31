@@ -2,6 +2,7 @@
 
 iwgetid
 if [ $? -eq 255 ]; then
+  cd project_sim
   sudo service wifi-setup start
   sleep 60
   python3 /home/pi/python_flask/web.py
