@@ -16,35 +16,24 @@ def write_file(text1, text2, text3):
                 + '\n' + '\n' + "network={" + '\n' + 'ssid=' + x + text1 + x + '\n' + "scan_ssid=1" + '\n' +
                 'psk=' + x + text2 + x + '\n' + "key_mgmt=WPA-PSK" + '\n' + "}")
     with open('fb.txt', 'a') as f:
-        f.write(x + text3 + x)
+        f.write(text3)
 
-    original = '/home/pi/wpa_supplicant.conf'
-    target = '/home/pi/python_flask/bob/wpa_supplicant.conf'
+    original = '/home/pi/project_sim/wpa_supplicant.conf'
+    target = '/home/pi/python_flask/bob'
     shutil.move(original, target)
-
-@app.route("/shutdown", methods=['GET'])
-def shutdown():
-    shutdown_func = request.environ.get('werkzeug.server.shutdown')
-    if shutdown_func is None:
-        raise RuntimeError('Not running werkzeug')
-    shutdown_func()
-    return "Shutting down..."
 
 @app.route('/')
 def my_form():
     return render_template('index.html')
 
-@app.route('/', methods = ['GET','POST'])
+@app.route('/', methods = ['POST'])
 def my_form_post():
     if request.method == 'POST':
         text1 = request.form['ssid']
         text2 = request.form['passwoord']
         text3 = request.form['fb']
         write_file(text1, text2, text3)
-        time.sleep(2)
-        shutdown()
-    elif request.method == "GET":
-        return render_template('index.html')
+        return "Rebooting in 20 seconds"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=8000)
