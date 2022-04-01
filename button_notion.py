@@ -72,9 +72,10 @@ button_1 = Button(pin=21)
 button_2 = Button(pin=12)
 button_3 = Button(pin=26)
 
-LED_COUNT = 10
+LED_COUNT = 5
 pixels = neopixel.NeoPixel(board.D18,LED_COUNT)
 
+# Read txt file 
 keyFile = open('fb.txt', 'r')
 access_token = keyFile.readline().rstrip()
 
@@ -230,81 +231,24 @@ def youtube_notion():
         if converted_view == goal:
             print("goal reached")
             pixels.fill((255, 255, 255))
-        elif converted_view <= goal/100*10:
-            print("tussen 0-10%")
-            pixels[0] = (255, 255, 255)
         elif converted_view <= goal/100*20:
-            print("tussen 10-20%")
+            print("20%")
             pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-        elif converted_view <= goal/100*30:
-            print("tussen 20-30%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
         elif converted_view <= goal/100*40:
-            print("tussen 30-40%")
+            print("40%")
             pixels[0] = (255, 255, 255)
             pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-        elif converted_view <= goal/100*50:
-            print("tussen 40-50%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
         elif converted_view <= goal/100*60:
-            print("tussen 50-60%")
+            print("60%")
             pixels[0] = (255, 255, 255)
             pixels[1] = (255, 255, 255)
             pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-        elif converted_view <= goal/100*70:
-            print("tussen 60-70%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-            pixels[6] = (255, 255, 255)
         elif converted_view <= goal/100*80:
-            print("tussen 70-80%")
+            print("80%")
             pixels[0] = (255, 255, 255)
             pixels[1] = (255, 255, 255)
             pixels[2] = (255, 255, 255)
             pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-            pixels[6] = (255, 255, 255)
-            pixels[7] = (255, 255, 255)
-        elif converted_view <= goal/100*90:
-            print("tussen 80-90%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-            pixels[6] = (255, 255, 255)
-            pixels[7] = (255, 255, 255)
-            pixels[8] = (255, 255, 255)
-        elif converted_view <= goal/100*99:
-            print("tussen 90-99%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-            pixels[6] = (255, 255, 255)
-            pixels[7] = (255, 255, 255)
-            pixels[8] = (255, 255, 255)
-            pixels[9] = (255, 255, 255)
         i = 100
         while i > 0:
             i -= 1
@@ -328,81 +272,24 @@ def facebook_notion():
         if fb_likes_2 == fb_goal:
             print("goal reached")
             pixels.fill((255, 255, 255))
-        elif fb_likes_2 <= fb_goal/100*10:
-            print("tussen 0-10%")
-            pixels[0] = (255, 255, 255)
         elif fb_likes_2 <= fb_goal/100*20:
-            print("tussen 10-20%")
+            print("20%")
             pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-        elif fb_likes_2 <= fb_goal/100*30:
-            print("tussen 20-30%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
         elif fb_likes_2 <= fb_goal/100*40:
-            print("tussen 30-40%")
+            print("40%")
             pixels[0] = (255, 255, 255)
             pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-        elif fb_likes_2 <= fb_goal/100*50:
-            print("tussen 40-50%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
         elif fb_likes_2 <= fb_goal/100*60:
-            print("tussen 50-60%")
+            print("60%")
             pixels[0] = (255, 255, 255)
             pixels[1] = (255, 255, 255)
             pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-        elif fb_likes_2 <= fb_goal/100*70:
-            print("tussen 60-70%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-            pixels[6] = (255, 255, 255)
         elif fb_likes_2 <= fb_goal/100*80:
-            print("tussen 70-80%")
+            print("80%")
             pixels[0] = (255, 255, 255)
             pixels[1] = (255, 255, 255)
             pixels[2] = (255, 255, 255)
             pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-            pixels[6] = (255, 255, 255)
-            pixels[7] = (255, 255, 255)
-        elif fb_likes_2 <= fb_goal/100*90:
-            print("tussen 80-90%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-            pixels[6] = (255, 255, 255)
-            pixels[7] = (255, 255, 255)
-            pixels[8] = (255, 255, 255)
-        elif fb_likes_2 <= fb_goal/100*99:
-            print("tussen 90-99%")
-            pixels[0] = (255, 255, 255)
-            pixels[1] = (255, 255, 255)
-            pixels[2] = (255, 255, 255)
-            pixels[3] = (255, 255, 255)
-            pixels[4] = (255, 255, 255)
-            pixels[5] = (255, 255, 255)
-            pixels[6] = (255, 255, 255)
-            pixels[7] = (255, 255, 255)
-            pixels[8] = (255, 255, 255)
-            pixels[9] = (255, 255, 255)
         i = 100
         while i > 0:
             i -= 1
