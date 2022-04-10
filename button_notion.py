@@ -19,6 +19,7 @@ import Adafruit_SSD1306
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+import sqlite3
 import subprocess
 
 __author__ = "Bo Claes"
@@ -75,9 +76,12 @@ button_3 = Button(pin=26)
 LED_COUNT = 5
 pixels = neopixel.NeoPixel(board.D18,LED_COUNT)
 
-# Read txt file 
-keyFile = open('fb.txt', 'r')
-access_token = keyFile.readline().rstrip()
+conn = sqlite3.connect('fb.db')
+c = conn.cursor()
+c.execute("SELECT fbid FROM dhtreadings ORDER BY ROWID DESC LIMIT 1;")
+results = c.fetchall()
+id = results[0]
+access_token = ''.join(id)
 
 # path waar de folder gemaakt moet worden
 path = "/home/pi/project_sim/logs"
