@@ -5,22 +5,46 @@ import io
 import sys
 import shutil
 import time
+import sqlite3
 
 app = Flask(__name__)
 
-def write_file(text1, text2, text3):
+def write_file(text1, text2, text3, text4, text5):
 
     x = '"'
+    database_youtube = "youtube"
+    database_facebook = "facebook"
+
     with open('wpa_supplicant.conf', 'a') as f:
         f.write("country=BE" + '\n' + "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev" + '\n' + "update_config=1"
                 + '\n' + '\n' + "network={" + '\n' + 'ssid=' + x + text1 + x + '\n' + "scan_ssid=1" + '\n' +
                 'psk=' + x + text2 + x + '\n' + "key_mgmt=WPA-PSK" + '\n' + "}")
-    with open('fb.txt', 'a') as f:
-        f.write(text3)
+
+    conn = sqlite3.connect('fb.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO dhtreadings(fbid) values("+ x + text3 + x + ")")
+    conn.commit()
+    c.execute("INSERT INTO notion(id, database_id) values("+ x + database_youtube + x + "," + x + text4 + x + ")")
+    conn.commit()
+    c.execute("INSERT INTO notion(id, database_id) values("+ x + database_facebook + x + "," + x + text5 + x + ")")
+    conn.commit()
+    conn.close()
 
     original = '/home/pi/project_sim/wpa_supplicant.conf'
-    target = '/home/pi/python_flask/bob'
+    target = '/home/pi/project_sim/bob'
     shutil.move(original, target)
+
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    shutdown_server()
+    return 'Server shutting down...'
 
 @app.route('/')
 def my_form():
@@ -32,8 +56,11 @@ def my_form_post():
         text1 = request.form['ssid']
         text2 = request.form['passwoord']
         text3 = request.form['fb']
-        write_file(text1, text2, text3)
-        return "Rebooting in 20 seconds"
+        text4 = request.form['id_youtube']
+        text5 = request.form['id_facebook']
+        write_file(text1, text2, text3, text4, text5)
+        return shutdown()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, port=8000)
+    app.run(port=8000, host = '0.0.0.0')
+
