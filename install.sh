@@ -15,12 +15,15 @@ sudo apt-get -y install python-smbus
 sudo apt-get -y install i2c-tools
 sudo pip3 install pillow
 sudo pip3 install image
+sudo pip3 install mysql-connector-python
 sudo apt-get -y install libopenjp2-7 libtiff5 libatlas-base-dev
 sudo pip3 install Adafruit_BBIO
 sudo pip3 install Adafruit-SSD1306
+sudo apt-get install sqlite3
 sudo apt-get install hostapd
 sudo apt-get install udhcpd
 sudo systemctl unmask hostapd
 sudo systemctl disable hostapd
 sudo systemctl disable udhcpd
+
 
