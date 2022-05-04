@@ -9,7 +9,7 @@ import sqlite3
 
 app = Flask(__name__)
 
-def write_file(text1, text2, text3, text4, text5):
+def write_file(text1, text2, text3, text4, text5, text6):
 
     x = '"'
     database_youtube = "youtube"
@@ -28,6 +28,7 @@ def write_file(text1, text2, text3, text4, text5):
     conn.commit()
     c.execute("INSERT INTO notion(id, database_id) values("+ x + database_facebook + x + "," + x + text5 + x + ")")
     conn.commit()
+    c.execute("INSERT INTO email_notion(email_notion) values"+ x + text6 + x + ")")
     conn.close()
 
     original = '/home/pi/project_sim/wpa_supplicant.conf'
@@ -58,9 +59,9 @@ def my_form_post():
         text3 = request.form['fb']
         text4 = request.form['id_youtube']
         text5 = request.form['id_facebook']
-        write_file(text1, text2, text3, text4, text5)
+        text6 = request.form['email_notion']
+        write_file(text1, text2, text3, text4, text5, text6)
         return shutdown()
 
 if __name__ == "__main__":
     app.run(port=8000, host = '0.0.0.0')
-
