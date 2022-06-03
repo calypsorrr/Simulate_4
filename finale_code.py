@@ -29,7 +29,9 @@ __author__ = "Bo Claes"
 __email__ = "bo.claes@student.kdg.be"
 __status__ = "Development"
 
-x = '"'
+y = '"'
+
+path = '/home/pi/project_sim/fb.db'
 
 config = {
   'host':'goalgetter.mysql.database.azure.com',
@@ -37,8 +39,29 @@ config = {
   'password':'KdGaBhg4?7643',
   'database':'access_key',
   'client_flags': [mysql.connector.ClientFlag.SSL],
-  'ssl_ca': 'cert/DigiCertGlobalRootG2.crt.pem'
+  'ssl_ca': '/home/pi/project_sim/cert/DigiCertGlobalRootG2.crt.pem'
 }
+
+cn = sqlite3.connect(path)
+c = cn.cursor()
+c.execute("SELECT fbid FROM dhtreadings ORDER BY ROWID DESC LIMIT 1;")
+results = c.fetchall()
+id = results[0]
+access_token = ''.join(id)
+c.execute("SELECT database_id FROM notion WHERE id = 'youtube';")
+results_youtube = c.fetchall()
+id_youtube = results_youtube[0]
+databaseId_youtube_sql = ''.join(id_youtube)
+c.execute("SELECT database_id FROM notion WHERE id = 'facebook';")
+results_facebook = c.fetchall()
+id_facebook = results_facebook[0]
+databaseId_facebook_sql = ''.join(id_facebook)
+c.execute("SELECT email FROM email_notion;")
+result_email = c.fetchall()
+res_email = result_email[0]
+res_email_sql = ''.join(res_email)
+cn.close()
+print(res_email_sql)
 
 # try:
 conn = mysql.connector.connect(**config)
@@ -52,10 +75,10 @@ print("Connection established")
 #     print(err)
 # else:
 cursor = conn.cursor()
-cursor.execute("SELECT notion_access_key FROM key_access WHERE email = 'boclaes102@gmail.com'")
+cursor.execute("SELECT notion_access_key FROM key_access WHERE email ="+ y + res_email_sql+ y + "LIMIT 1")
 result = cursor.fetchall()
-x = result[0]
-access_key_notion = ''.join(x)
+bob = result[0]
+access_key_notion = ''.join(bob)
 print(access_key_notion)
 rows = cursor.fetchall()
 print("Read",cursor.rowcount,"row(s) of data.")
@@ -103,6 +126,7 @@ top = padding
 bottom = height-padding
 x = padding
 
+
 # Load default font.
 font = ImageFont.load_default()
 
@@ -114,24 +138,9 @@ button_3 = Button(pin=26)
 LED_COUNT = 5
 pixels = neopixel.NeoPixel(board.D18,LED_COUNT)
 
-conn = sqlite3.connect('fb.db')
-c = conn.cursor()
-c.execute("SELECT fbid FROM dhtreadings ORDER BY ROWID DESC LIMIT 1;")
-results = c.fetchall()
-id = results[0]
-access_token = ''.join(id)
-c.execute("SELECT database_id FROM notion WHERE id = 'youtube';")
-results_youtube = c.fetchall()
-id_youtube = results_youtube[0]
-databaseId_youtube_sql = ''.join(id_youtube)
-c.execute("SELECT database_id FROM notion WHERE id = 'facebook';")
-results_facebook = c.fetchall()
-id_facebook = results_facebook[0]
-databaseId_facebook_sql = ''.join(id_facebook)
-conn.close()
-
 # path waar de folder gemaakt moet worden
 path = "/home/pi/project_sim/logs"
+path_2 = "/home/pi/project_sim/escape.txt"
 
 # variablen facebook
 token_f = access_token
@@ -147,13 +156,13 @@ headers_patch = {
     "Accept": "application/json",
     "Notion-Version": "2021-08-16",
     "Content-Type": "application/json",
-    "Authorization": "Bearer secret_BwJkEPpGUXQkLL0ngzAzXulFTczkDMIFf4Yi3rxujWj"
+    "Authorization": "Bearer " + access_key_notion
 }
 
 headers_post = {
     "Accept": "application/json",
     "Notion-Version": "2021-08-16",
-    "Authorization": "Bearer secret_BwJkEPpGUXQkLL0ngzAzXulFTczkDMIFf4Yi3rxujWj"
+    "Authorization": "Bearer " + access_key_notion
 }
 
 readUrl = f"https://api.notion.com/v1/databases/{databaseId_Youtube}/query"
@@ -178,6 +187,11 @@ def create_folder():
     except FileExistsError:
         print("folder already exist")
 
+def create_escape():
+    try:
+        open(path_2, "x")
+    except FileExistsError:
+        print("file already exist")
 
 def facebook_likes(token_f):
     graph = facebook.GraphAPI(token_f)
@@ -239,9 +253,9 @@ def read_notion_facebook(databaseId_facebook, headers_post):
     global fb_id
     fb_goal = data["results"][0]["properties"]["Goal"]["number"]
     fb_likes = data["results"][0]["properties"]["Likes"]["number"]
-    fb_id = data["results"][0]["properties"]["Facebook_id"]["title"][1]["text"]["content"]
+    fb_id = data["results"][0]["properties"]["Facebook_id"]["title"][0]["text"]["content"]
     with open('logs/read_facebook.json', 'w', encoding='utf8') as f:
-        json.dump(data, f, ensure_ascii=False)
+        json.dump(fb_id, f, ensure_ascii=False)
 
 def update_notion_youtube(page_id_youtube, headers_patch):
     url = f"https://api.notion.com/v1/pages/{page_id_youtube}"
@@ -363,18 +377,27 @@ def facebook_notion():
 
 
 def main():
-    disp.clear()
-    pixels.fill((0, 0, 0))
-    draw.rectangle((0,0,width,height), outline=0, fill=0)
-    draw.text((x + 30, top), "Main menu", font=font, fill=255)
-    disp.image(image)
-    disp.display()
-    print("u bent in main")
-    while True:
-        if button_1.is_active:
-            youtube_notion()
-        elif button_2.is_active:
-            facebook_notion()
+    try:
+        create_escape()
+        disp.clear()
+        pixels.fill((0, 0, 0))
+        draw.rectangle((0,0,width,height), outline=0, fill=0)
+        draw.text((x + 30, top), "Main menu", font=font, fill=255)
+        disp.image(image)
+        disp.display()
+        print("u bent in main")
+        while True:
+            if button_1.is_active:
+                youtube_notion()
+            elif button_2.is_active:
+                facebook_notion()
+    except:
+        disp.clear()
+        pixels.fill((0, 0, 0))
+        draw.rectangle((0,0,width,height), outline=0, fill=0)
+        draw.text((x + 30, top), "ERROR", font=font, fill=255)
+        disp.image(image)
+        disp.display()
 
 
 if __name__ == '__main__':  # code to execute if called from command-line
