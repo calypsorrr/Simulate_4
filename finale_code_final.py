@@ -80,8 +80,6 @@ font = ImageFont.load_default()
 LED_COUNT = 5
 pixels = neopixel.NeoPixel(board.D18,LED_COUNT)
 
-# path to database
-path = '/home/pi/project_sim/fb.db'
 
 # config for connecting to database on the cloud
 config = {
@@ -98,60 +96,64 @@ global databaseId_youtube_sql
 global databaseId_facebook_sql
 global access_key_notion
 
-try:
-    # Getting the Youtube notion id and facebook notion id from the database
-    cn = sqlite3.connect(path)
-    c = cn.cursor()
-    c.execute("SELECT fbid FROM dhtreadings ORDER BY ROWID DESC LIMIT 1;")
-    results = c.fetchall()
-    id = results[0]
-    access_token = ''.join(id)
-    c.execute("SELECT database_id FROM notion WHERE id = 'youtube';")
-    results_youtube = c.fetchall()
-    id_youtube = results_youtube[0]
-    databaseId_youtube_sql = ''.join(id_youtube)
-    c.execute("SELECT database_id FROM notion WHERE id = 'facebook';")
-    results_facebook = c.fetchall()
-    id_facebook = results_facebook[0]
-    databaseId_facebook_sql = ''.join(id_facebook)
-    c.execute("SELECT email FROM email_notion;")
-    result_email = c.fetchall()
-    res_email = result_email[0]
-    res_email_sql = ''.join(res_email)
-    cn.close()
-    print(res_email_sql)
+def database():
+    try:
+        # path to database
+        path = '/home/pi/project_sim/fb.db'
+        # Getting the Youtube notion id and facebook notion id from the database
+        cn = sqlite3.connect(path)
+        c = cn.cursor()
+        c.execute("SELECT fbid FROM dhtreadings ORDER BY ROWID DESC LIMIT 1;")
+        results = c.fetchall()
+        id = results[0]
+        access_token = ''.join(id)
+        c.execute("SELECT database_id FROM notion WHERE id = 'youtube';")
+        results_youtube = c.fetchall()
+        id_youtube = results_youtube[0]
+        databaseId_youtube_sql = ''.join(id_youtube)
+        c.execute("SELECT database_id FROM notion WHERE id = 'facebook';")
+        results_facebook = c.fetchall()
+        id_facebook = results_facebook[0]
+        databaseId_facebook_sql = ''.join(id_facebook)
+        c.execute("SELECT email FROM email_notion;")
+        result_email = c.fetchall()
+        res_email = result_email[0]
+        res_email_sql = ''.join(res_email)
+        cn.close()
+        print(res_email_sql)
 
-    # connection to the database on the cloud and getting the access key
-    # try:
-    conn = mysql.connector.connect(**config)
-    print("Connection established")
-    # except mysql.connector.Error as err:
-    #   if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-    #     print("Something is wrong with the user name or password")
-    #   elif err.errno == errorcode.ER_BAD_DB_ERROR:
-    #     print("Database does not exist")
-    #   else:
-    #     print(err)
-    # else:
-    cursor = conn.cursor()
-    cursor.execute("SELECT notion_access_key FROM key_access WHERE email ="+ y + res_email_sql+ y + "LIMIT 1")
-    result = cursor.fetchall()
-    bob = result[0]
-    access_key_notion = ''.join(bob)
-    print(access_key_notion)
-    rows = cursor.fetchall()
-    print("Read",cursor.rowcount,"row(s) of data.")
-    conn.commit()
-    cursor.close()
-    conn.close()
-    print("Done")
-except:
-    disp.clear()
-    pixels.fill((0, 0, 0))
-    draw.rectangle((0, 0, width, height), outline=0, fill=0)
-    draw.text((x + 0, top), "ERROR WITH DATABASE", font=font, fill=255)
-    disp.image(image)
-    disp.display()
+        # connection to the database on the cloud and getting the access key
+        # try:
+        conn = mysql.connector.connect(**config)
+        print("Connection established")
+        # except mysql.connector.Error as err:
+        #   if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+        #     print("Something is wrong with the user name or password")
+        #   elif err.errno == errorcode.ER_BAD_DB_ERROR:
+        #     print("Database does not exist")
+        #   else:
+        #     print(err)
+        # else:
+        cursor = conn.cursor()
+        cursor.execute("SELECT notion_access_key FROM key_access WHERE email ="+ y + res_email_sql+ y + "LIMIT 1")
+        result = cursor.fetchall()
+        bob = result[0]
+        access_key_notion = ''.join(bob)
+        print(access_key_notion)
+        rows = cursor.fetchall()
+        print("Read",cursor.rowcount,"row(s) of data.")
+        conn.commit()
+        cursor.close()
+        conn.close()
+        print("Done")
+    except:
+        disp.clear()
+        pixels.fill((0, 0, 0))
+        draw.rectangle((0, 0, width, height), outline=0, fill=0)
+        draw.text((x + 0, top), "ERROR WITH DATABASE", font=font, fill=255)
+        disp.image(image)
+        disp.display()
+        database()
 
 # Variable led's, buttons
 button_1 = Button(pin=21)
@@ -161,7 +163,7 @@ button_3 = Button(pin=26)
 
 # Path to where the file and folder needs to be maked
 path = "/home/pi/project_sim/logs"
-path_2 = "/home/pi/project_sim/escape.txt"
+path_2 = "/home/pi/escape.txt"
 
 # Variable Facebook
 token_f = access_token
@@ -322,6 +324,7 @@ def update_notion_facebook(page_id_facebook, headers_patch):
 
 # Display youtube on the LCD screen + setting the led strip up based on some % calculations
 def youtube_notion():
+    database()
     disp.clear()
     draw.rectangle((0,0,width,height), outline=0, fill=0)
     draw.text((x + 30, top), "Youtube", font=font, font_size=30, fill=255)
@@ -364,6 +367,7 @@ def youtube_notion():
 
 # Display facebook on the LCD screen + setting the led strip up based on some % calculations
 def facebook_notion():
+    database()
     disp.clear()
     draw.rectangle((0,0,width,height), outline=0, fill=0)
     draw.text((x + 30, top), "Facebook", font=font, font_size=30, fill=255)
@@ -406,6 +410,7 @@ def facebook_notion():
 # Display Main menu on the lcd screen + setting everything in a main loop
 def main():
     try:
+        database()
         create_escape()
         disp.clear()
         pixels.fill((0, 0, 0))
